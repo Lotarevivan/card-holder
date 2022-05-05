@@ -1,26 +1,43 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+<div>
+  <ul class="mdc-image-list my-image-list">
+  <li class="mdc-image-list__item">
+    <div class="mdc-image-list__image-aspect-container">
+      <img class="mdc-image-list__image" >
+    </div>
+    <div class="mdc-image-list__supporting">
+      <span class="mdc-image-list__label">Text label</span>
+    </div>
+  </li>
+  <li class="mdc-image-list__item">
+    <div class="mdc-image-list__image-aspect-container">
+      <img class="mdc-image-list__image" >
+    </div>
+    <div class="mdc-image-list__supporting">
+      <span class="mdc-image-list__label">Text label</span>
+    </div>
+  </li>
+  <li class="mdc-image-list__item">
+    <div class="mdc-image-list__image-aspect-container">
+      <img class="mdc-image-list__image" >
+    </div>
+    <div class="mdc-image-list__supporting">
+      <span class="mdc-image-list__label">Text label</span>
+    </div>
+  </li>
+  
+</ul>
+</div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang='scss'>
+@use "@material/image-list/mdc-image-list";
+
 </style>
