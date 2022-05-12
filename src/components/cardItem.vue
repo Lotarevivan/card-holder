@@ -24,7 +24,7 @@
       <div class="cards__body-number" v-html="maskedNumber"></div>
       <div class="cards__body-valid">
         <div>
-          valid/ <br />
+          valid/ <br>
           true
         </div>
         <div>{{ validMonth }}/{{ validYear }}</div>

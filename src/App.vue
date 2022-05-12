@@ -25,73 +25,130 @@
       </cards-item>
     </section>
 
-     <div id="modal1" class="modal">
-    <div class="modal-content">
-      <h4>Lorem ipsum dolor sit amet.</h4>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique odio non, porro ipsa mollitia quo eius eum rem earum cupiditate animi iste necessitatibus nesciunt facere ducimus laboriosam molestias ut dolore.</p>
+    <div id="modal1" class="modal">
+      <div class="modal-content">
+        <h4>Lorem ipsum dolor sit amet.</h4>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique
+          odio non, porro ipsa mollitia quo eius eum rem earum cupiditate animi
+          iste necessitatibus nesciunt facere ducimus laboriosam molestias ut
+          dolore.
+        </p>
         <div class="row">
-    <form class="col s12">
-      <div class="row">
-        <div class="input-field col s12">
-           <!-- <i class="material-icons prefix">mode_edit</i> -->
-          <input 
-           v-model="newCardNumber" 
-           v-maska="'#### #### #### #### ####'" 
-           @keyup="checkCadrdsNumber"
-           placeholder="Введите номер карты" 
-           id="card-number" 
-           type="text" 
-           class="validate">
-          <label for="card-number">Номер карты</label>
-          <!-- {{testCardNumber}} -->
-          {{newCardNumberPotentialyIsValid}}
-          <!-- <span class="helper-text" data-error="wrong" data-success="right">Helper text</span> -->
+          <form class="col s12">
+            <div class="row">
+              <div class="input-field col s12">
+                <input
+                  v-model="newCardNumber"
+                  v-maska="'#### #### #### #### ####'"
+                  @keyup="checkCadrdsNumber"
+                  :style="{
+                    background:
+                      'url(' +
+                      require(`@logo/paysystem/${inputLogo}.svg`) +
+                      ') no-repeat right',
+                    backgroundSize: '50px',
+                  }"
+                  id="card-number"
+                  type="text"
+                  class="input__logo"
+                  :class="newCardNumberError"
+                />
+                <label for="card-number">Номер карты</label>
+                <span
+                  class="helper-text"
+                  data-error="Проверьте номер карты"
+                  data-success=""
+                ></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s6">
+                <input
+                  v-model="newCardDate"
+                  v-maska="'##/##'"
+                  @keyup="checkCadrdsDate"
+                  @blur="checkCadrdsDate"
+                  placeholder="00/00"
+                  id="card-date"
+                  type="text"
+                  class=""
+                  :class="newCardDateError"
+                />
+                <label for="card-date">Месяц/Год</label>
+                <span
+                  class="helper-text"
+                  data-error="Проверьте дату выпуска"
+                  data-success=""
+                ></span>
+              </div>
+              <div class="input-field col s6">
+                <input
+                  v-model="newCardCvv"
+                  v-maska="'###'"
+                  @keyup="checkCadrdsCvv"
+                  @blur="checkCadrdsCvv"
+                  id="cvv"
+                  type="password"
+                  class=""
+                  :class="newCardCvvError"
+                />
+                <label for="cvv">CVV/CVV</label>
+                <span
+                  class="helper-text"
+                  data-error="Проверьте код"
+                  data-success=""
+                ></span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input
+                  v-model="newCardName"
+                  v-maska="'###'"
+                  @keyup="checkCadrdsName"
+                  @blur="checkCadrdsCvv"
+                  placeholder="Введите имя как на карте"
+                  id="name"
+                  type="text"
+                  class=""
+                />
+                <label for="name">Имя держателя</label>
+                <span
+                  class="helper-text"
+                  data-error="Проверьте дату выпуска"
+                  data-success=""
+                ></span>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="input-field col s12">
+                <p>
+                  <label>
+                    <input type="checkbox" />
+                    <span>Согласен</span>
+                  </label>
+                </p>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="row">
-        <div class="input-field col s4">
-          <input  
-          placeholder="месяц" 
-          id="month"
-          type="text"
-          class="validate"
-          >
-          <label for="month">Месяц</label>
-        </div>
-        <div class="input-field col s4">
-          <input
-            value=""
-            id="year"
-            type="text"
-            class="validate">
-          <label for="year">Год</label>
-        </div>
-        <div class="input-field col s4">
-          <input  value="" id="CVV" type="password" class="validate">
-          <label for="cvv">CVV</label>
-        </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn left"
+          >Отмена</a
+        >
+        <a href="#!" class="modal-close waves-effect waves-green btn disabled"
+          >Ок</a
+        >
       </div>
-      <div class="row">
-        <div class="input-field col s12">
-          <input
-            placeholder="Введите имя как на карте"
-           id="name" type="text" class="validate">
-          <label for="name">Имя держателя</label>
-        </div>
-      </div>
-    </form>
-  </div>
     </div>
-    <div class="modal-footer">
-       <a href="#!" class="modal-close waves-effect waves-green btn left">Отмена</a>
-      <a href="#!" class="modal-close waves-effect waves-green btn disabled">Ок</a>
-    </div>
-  </div>
   </div>
 </template>
 
 <script>
-import CardValidator  from 'card-validator'
+import CardValidator from 'card-validator'
 import cardsItem from './components/cardItem.vue'
 export default {
   name: 'App',
@@ -105,68 +162,123 @@ export default {
           id: '1', // айди токена карты в нашей системе
           paysystem: 'mastercard',
           cardNumber: '1234123412341234',
-          validMonth: '',
-          validYear: '',
+          validMonth: '11',
+          validYear: '22',
           holderName: 'Ivan Lotarev',
         },
         {
           id: '2',
           paysystem: 'mir',
           cardNumber: '1234123412341234',
-          validMonth: '',
-          validYear: '',
+          validMonth: '11',
+          validYear: '22',
           holderName: 'Ivan Lotarev',
         },
         {
           id: '3',
           paysystem: 'visa',
           cardNumber: '1234123412341234',
-          validMonth: '',
-          validYear: '',
+          validMonth: '11',
+          validYear: '22',
           holderName: 'Ivan Lotarev',
         },
       ],
       modalInstance: '',
 
-      newCardNumber:'',
-      newCardNumberPotentialyIsValid:null,
-      newCardType:null
-      
+      newCardNumber: '', // номер
+      newCardNumberPotentialyIsValid: null,
+
+      newCardType: null, // лого
+
+      newCardDate: '', // дата
+      newCardDateIsValid: null,
+
+      newCardCvv: '', // CVV
+      newCardCvvIsValid: null,
+
+      newCardName: '',
+      newCardNameIsValid: '',
     }
   },
-  // computed:{
-  //   testCardNumber() {
-  //     return CardValidator.number(this.newCardNumber)
-  //   }
-  // },
+  computed: {
+    newCardNumberError() {
+      if (this.newCardNumber.length < 1) {
+        return ''
+      } else {
+        return this.newCardNumberPotentialyIsValid
+          ? 'validate valid'
+          : 'validate invalid'
+      }
+    },
+
+    newCardDateError() {
+      if (this.newCardDate.length < 1) {
+        return ''
+      }
+      return this.newCardDateIsValid.isValid
+        ? 'validate valid'
+        : 'validate invalid'
+    },
+    newCardCvvError() {
+      if (this.newCardCvv.length < 1) {
+        return ''
+      }
+      return this.newCardCvvIsValid ? 'validate valid' : 'validate invalid'
+    },
+    inputLogo() {
+      return this.newCardType ? this.newCardType : 'default'
+    },
+  },
   mounted() {
     this.modalInit()
-   
   },
   methods: {
     modalInit() {
-      //Инициалиируем и сохраняем ссылку на модальное окно
+      // переопределим валидацию materialcss, затирает классы
+      this.$material.validate_field = () => {}
+      // сИнициалиируем и сохраняем ссылку на модальное окно
       const modalElements = this.$material.Modal.init(
-        document.querySelectorAll('.modal'),
-        {
-          startingTop: '10%',
-        }
+        document.querySelectorAll('.modal')
       )
       this.modalInstance = modalElements[0]
     },
     modalOpen() {
       this.modalInstance.open()
     },
-    checkCadrdsNumber(){
-      // console.log(this.newCardNumber)
-      // console.log(this.newCardNumber.length)
-      // console.log(CardValidator.number(this.newCardNumber).card)
-      if(this.newCardNumber.length===0||CardValidator.number(this.newCardNumber).card===null){
+    checkCadrdsNumber() {
+      if (this.newCardNumber.length === 0) {
         return
       }
-      console.log(CardValidator.number(this.newCardNumber))
-      this.newCardNumberPotentialyIsValid = CardValidator.number(this.newCardNumber).card.isPotentiallyValid
-    }
+      const candidateCard = CardValidator.number(
+        //отдаем на проверку npm пакету card-validator
+        this.newCardNumber
+      )
+      this.newCardNumberPotentialyIsValid = candidateCard.isPotentiallyValid //1 флаг isPotentiallyValid
+      if (candidateCard.card !== null) {
+        //2 тип карты
+        this.newCardType = candidateCard.card.type
+      } else {
+        this.newCardType = null
+      }
+    },
+    checkCadrdsDate() {
+      const candidateCard = CardValidator.expirationDate(
+        //отдаем на проверку npm пакету card-validator
+        this.newCardDate
+      )
+      console.log(candidateCard)
+      this.newCardDateIsValid = candidateCard
+    },
+    checkCadrdsCvv() {
+      const candidateCard = CardValidator.cvv(
+        //отдаем на проверку npm пакету card-validator
+        this.newCardCvv
+      )
+      this.newCardCvvIsValid = candidateCard.isValid
+    },
+    checkCadrdsName() {
+      // не пустое
+    },
   },
 }
 </script>
@@ -291,5 +403,11 @@ export default {
       max-height: inherit;
     }
   }
+}
+
+.input__logo {
+  padding-right: 25px;
+
+  background-size: 20px;
 }
 </style>
