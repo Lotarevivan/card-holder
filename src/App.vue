@@ -1,6 +1,8 @@
 <template>
   <div style="height: 100vh; background-color: rgba(170, 126, 227, 0.1)">
-    <section class="cards__container">
+    
+    <card-form></card-form>
+    <section class="cards__container" style="display:none">
       <div class="cards__add">
         <div class="cards__body-add">
           <div class="cards__body-button">
@@ -12,7 +14,7 @@
           </div>
         </div>
       </div>
-      <cards-item
+      <!-- <cards-item
         v-for="card in cardsArray"
         :key="card.id"
         v-show="cardsArray.length > 0"
@@ -22,7 +24,7 @@
         :validYear="card.validYear"
         :holderName="card.holderName"
       >
-      </cards-item>
+      </cards-item> -->
     </section>
 
     <div id="modal1" class="modal">
@@ -34,7 +36,7 @@
           iste necessitatibus nesciunt facere ducimus laboriosam molestias ut
           dolore.
         </p>
-        <card-form></card-form>
+        
       </div>
       <div class="modal-footer">
         <a href="#!" class="modal-close waves-effect waves-green btn left"
@@ -50,12 +52,12 @@
 
 <script>
 
-import cardsItem from './components/cardItem.vue'
+// import cardsItem from './components/cardItem.vue'
 import cardForm from './components/cardForm.vue'
 export default {
   name: 'App',
   components: {
-    cardsItem,
+    // cardsItem,
     cardForm
   },
   data() {
@@ -92,6 +94,7 @@ export default {
 
   mounted() {
     this.modalInit()
+    
   },
   methods: {
     modalInit() {

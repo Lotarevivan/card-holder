@@ -7,12 +7,14 @@
             v-model="newCardNumber"
             v-maska="'#### #### #### #### ####'"
             @keyup="checkCadrdsNumber"
-            :style="{
+            @blur="ValidateCadrdsNumber"
+            :style="{ // тут подумать
               background:
                 'url(' +
                 require(`@logo/paysystem/${inputLogo}.svg`) +
                 ') no-repeat right',
-              backgroundSize: '50px',
+                backgroundSize: '50px',
+                transition:'150ms'
             }"
             id="card-number"
             type="text"
@@ -25,9 +27,10 @@
             data-error="Проверьте номер карты"
             data-success=""
           ></span>
+          {{ newCardNumberIsValid }}
         </div>
       </div>
-      <div class="row">
+      <!-- <div class="row">
         <div class="input-field col s6">
           <input
             v-model="newCardDate"
@@ -65,8 +68,8 @@
             data-success=""
           ></span>
         </div>
-      </div>
-      <div class="row">
+      </div> -->
+      <!-- <div class="row">
         <div class="input-field col s12">
           <input
             v-model="newCardName"
@@ -85,9 +88,9 @@
             data-success=""
           ></span>
         </div>
-      </div>
+      </div> -->
 
-      <div class="row">
+      <!-- <div class="row">
         <div class="input-field col s12">
           <p>
             <label>
@@ -96,19 +99,21 @@
             </label>
           </p>
         </div>
-      </div>
+      </div> -->
     </form>
   </div>
 </template>
 
 <script>
 import CardValidator from 'card-validator'
+import  validateCardNumber  from './utils'
 export default {
-  name:'cardForm',
+  name: 'cardForm',
   data() {
     return {
       newCardNumber: '', // номер
       newCardNumberPotentialyIsValid: null,
+      newCardNumberIsValid: null,
 
       newCardType: null, // лого
 
@@ -124,17 +129,16 @@ export default {
   },
   computed: {
     newCardNumberError() {
-      if (this.newCardNumber.length < 1) {
+      if (this.newCardNumber.length <=2&&this.newCardNumberIsValid===null) {
         return ''
-      } else {
-        return this.newCardNumberPotentialyIsValid
-          ? 'validate valid'
-          : 'validate invalid'
       }
+      return this.newCardNumberPotentialyIsValid || this.newCardNumberIsValid
+        ? 'validation valid'
+        : 'validation invalid'
     },
 
     newCardDateError() {
-      if (this.newCardDate.length < 1) {
+      if (this.newCardDate.length <=1) {
         return ''
       }
       return this.newCardDateIsValid.isValid
@@ -148,27 +152,29 @@ export default {
       return this.newCardCvvIsValid ? 'validate valid' : 'validate invalid'
     },
     inputLogo() {
-      return this.newCardType ? this.newCardType : 'default'
+      //this.$logos константа в плагинах
+      return this.$logos.includes(this.newCardType)
+        ? this.newCardType
+        : 'default'
     },
+  },
+  mounted(){
+    
   },
   methods: {
     checkCadrdsNumber() {
-      if (this.newCardNumber.length === 0) {
-        return
-      }
-      const candidateCard = CardValidator.number(
-        //отдаем на проверку npm пакету card-validator
-        this.newCardNumber
-      )
-      this.newCardNumberPotentialyIsValid = candidateCard.isPotentiallyValid //1 флаг isPotentiallyValid
-      if (candidateCard.card !== null) {
-        //2 тип карты
-        this.newCardType = candidateCard.card.type
-      } else {
-        this.newCardType = null
-      }
+      // отдаем на проверку в файл utils.js
+      const res = validateCardNumber(this.newCardNumber)
+      this.newCardNumberPotentialyIsValid = res.isPotentiallyValid
+      this.newCardNumberIsValid = res.isValid,
+      this.newCardType  = res.newCardType
+    },
+    ValidateCadrdsNumber() {
+      // По блюру приравниваем т.к окончательно валидацию не прошла
+      this.newCardNumberPotentialyIsValid = this.newCardNumberIsValid
     },
     checkCadrdsDate() {
+      this.checkCadrdsNumber
       const candidateCard = CardValidator.expirationDate(
         //отдаем на проверку npm пакету card-validator
         this.newCardDate

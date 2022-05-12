@@ -2,9 +2,11 @@ import { createApp } from 'vue'
 import Maska from 'maska'
 import App from './App.vue'
 import M from 'materialize-css'
+import paysysLogo from './plugins/paysys-logo'
 const app = createApp(App)
-app.use(Maska)
-app.config.globalProperties.$material = M
+app.use(Maska) //инпут маск
+app.use(paysysLogo) // константа с логотипами
+app.config.globalProperties.$material = M // добавляем в this
 app.mount('#app')
 
 
@@ -16,11 +18,12 @@ app.mount('#app')
 // Карты можно удалять
 // Установка дефолтной карты
 // Модалка с полями добавления новой карты (номер, месяц, год, cvv, имя держателя) (на моб клавиатура только цифры )
-// Чекбокс права - согласен
+// Чекбокс правА - согласен
 // Валидация номера и определение платежной системы при вводе
 // Предусмотреть валидацию на серверве (дубли у разных КЛ)
-// В ответ на отправку вернется айди карты в нащей CRM (если все ок) сообщаем и добавдяем в плитку
+// В ответ на отправку вернется айди карты в нашей CRM (если все ок) сообщаем и добавдяем в плитку
 
 
 // Проблемы
-// 
+// Валидация по кейап и запрос на сервер - debounce? promise.all?
+// нет нужного лого в ассетах -  ошибка - дефолтное лого
