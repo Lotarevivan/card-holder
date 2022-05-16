@@ -4,6 +4,7 @@
 // отдаем на проверку npm пакету card-validator
 // возвращаем  pont.valid, valid,  paysystem, valid от бека
 import valid from 'card-validator'
+
 function validateCardNumber(number) {
   const card = valid.number(number)
   const { isPotentiallyValid, isValid } = card
@@ -13,4 +14,11 @@ function validateCardNumber(number) {
   }
   return{isPotentiallyValid,isValid,newCardType}
 }
-export default validateCardNumber
+
+function validateCardDate(date) {
+  const { isPotentiallyValid, isValid } = valid.expirationDate(date)
+  return{isPotentiallyValid,isValid}
+}
+
+
+export  {validateCardNumber,validateCardDate}

@@ -19,6 +19,7 @@
             id="card-number"
             type="text"
             class="input__logo"
+            inputmode="numeric"
             :class="newCardNumberError"
           />
           <label for="card-number">Номер карты</label>
@@ -27,16 +28,15 @@
             data-error="Проверьте номер карты"
             data-success=""
           ></span>
-          {{ newCardNumberIsValid }}
         </div>
       </div>
-      <!-- <div class="row">
+      <div class="row">
         <div class="input-field col s6">
           <input
             v-model="newCardDate"
             v-maska="'##/##'"
             @keyup="checkCadrdsDate"
-            @blur="checkCadrdsDate"
+            inputmode="numeric"
             placeholder="00/00"
             id="card-date"
             type="text"
@@ -54,11 +54,11 @@
           <input
             v-model="newCardCvv"
             v-maska="'###'"
-            @keyup="checkCadrdsCvv"
             @blur="checkCadrdsCvv"
             id="cvv"
             type="password"
-            class=""
+            inputmode="numeric"
+            required=''
             :class="newCardCvvError"
           />
           <label for="cvv">CVV/CVV</label>
@@ -68,18 +68,19 @@
             data-success=""
           ></span>
         </div>
-      </div> -->
-      <!-- <div class="row">
+      </div>
+       <div class="row">
         <div class="input-field col s12">
           <input
             v-model="newCardName"
-            v-maska="'###'"
-            @keyup="checkCadrdsName"
-            @blur="checkCadrdsCvv"
+        
+            @blur="checkCadrdsName"
             placeholder="Введите имя как на карте"
             id="name"
             type="text"
             class=""
+            :class="[newCardNameIsValid ? 'valid' :'invalid']"
+            inputmode="numeric"
           />
           <label for="name">Имя держателя</label>
           <span
@@ -88,7 +89,7 @@
             data-success=""
           ></span>
         </div>
-      </div> -->
+      </div>
 
       <!-- <div class="row">
         <div class="input-field col s12">
@@ -105,8 +106,7 @@
 </template>
 
 <script>
-import CardValidator from 'card-validator'
-import  validateCardNumber  from './utils'
+import  {validateCardNumber,validateCardDate}  from './utils'
 export default {
   name: 'cardForm',
   data() {
@@ -118,13 +118,15 @@ export default {
       newCardType: null, // лого
 
       newCardDate: '', // дата
+  
+      newCardDatePotentialyIsValid: null,
       newCardDateIsValid: null,
 
       newCardCvv: '', // CVV
-      newCardCvvIsValid: null,
+      newCardCvvIsValid: true,
 
       newCardName: '',
-      newCardNameIsValid: '',
+      newCardNameIsValid: true,
     }
   },
   computed: {
@@ -133,23 +135,20 @@ export default {
         return ''
       }
       return this.newCardNumberPotentialyIsValid || this.newCardNumberIsValid
-        ? 'validation valid'
-        : 'validation invalid'
+        ? 'valid'
+        : 'invalid'
     },
 
     newCardDateError() {
-      if (this.newCardDate.length <=1) {
+      if (this.newCardDate.length <=2) {
         return ''
       }
-      return this.newCardDateIsValid.isValid
-        ? 'validate valid'
-        : 'validate invalid'
+      return this.newCardDatePotentialyIsValid || this.newCardDateIsValid
+        ? 'valid'
+        : 'invalid'
     },
     newCardCvvError() {
-      if (this.newCardCvv.length < 1) {
-        return ''
-      }
-      return this.newCardCvvIsValid ? 'validate valid' : 'validate invalid'
+      return this.newCardCvvIsValid ? 'valid' : 'invalid'
     },
     inputLogo() {
       //this.$logos константа в плагинах
@@ -159,12 +158,13 @@ export default {
     },
   },
   mounted(){
-    
+   
   },
   methods: {
     checkCadrdsNumber() {
       // отдаем на проверку в файл utils.js
       const res = validateCardNumber(this.newCardNumber)
+      // TODO деструктр  
       this.newCardNumberPotentialyIsValid = res.isPotentiallyValid
       this.newCardNumberIsValid = res.isValid,
       this.newCardType  = res.newCardType
@@ -174,23 +174,16 @@ export default {
       this.newCardNumberPotentialyIsValid = this.newCardNumberIsValid
     },
     checkCadrdsDate() {
-      this.checkCadrdsNumber
-      const candidateCard = CardValidator.expirationDate(
-        //отдаем на проверку npm пакету card-validator
-        this.newCardDate
-      )
-      console.log(candidateCard)
-      this.newCardDateIsValid = candidateCard
+      const res = validateCardDate(this.newCardDate)
+      // TODO деструктр  
+      this.newCardDatePotentialyIsValid = res.isPotentiallyValid
+      this.newCardDateIsValid = res.isValid
     },
     checkCadrdsCvv() {
-      const candidateCard = CardValidator.cvv(
-        //отдаем на проверку npm пакету card-validator
-        this.newCardCvv
-      )
-      this.newCardCvvIsValid = candidateCard.isValid
+      this.newCardCvvIsValid = this.newCardCvv.length===3
     },
     checkCadrdsName() {
-      // не пустое
+      this.newCardNameIsValid = this.newCardName.length>1
     },
   },
 }
