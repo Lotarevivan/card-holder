@@ -1,10 +1,12 @@
 <template>
   <div class="row">
-    <form class="col s12">
+    <form class="col s12"
+      @keyup.enter="SendToServer"
+    >
       <div class="row">
         <div class="input-field col s12">
           <input
-            v-model="newCardNumber"
+            v-model.trim="newCardNumber"
             v-maska="'#### #### #### #### ####'"
             @keyup="checkCadrdsNumber"
             @blur="ValidateCadrdsNumber"
@@ -33,7 +35,7 @@
       <div class="row">
         <div class="input-field col s6">
           <input
-            v-model="newCardDate"
+            v-model.trim="newCardDate"
             v-maska="'##/##'"
             @keyup="checkCadrdsDate"
             inputmode="numeric"
@@ -54,7 +56,8 @@
           <input
             v-model="newCardCvv"
             v-maska="'###'"
-            @blur="checkCadrdsCvv"
+            @keyup="checkCadrdsCvv"
+            @blur="validateCadrdsCvv"
             id="cvv"
             type="password"
             inputmode="numeric"
@@ -72,61 +75,77 @@
        <div class="row">
         <div class="input-field col s12">
           <input
-            v-model="newCardName"
-        
-            @blur="checkCadrdsName"
+            v-model.trim="newCardName"
+            @blur="validateCadrdsName"
+            @keyup="checkCadrdsName"
             placeholder="Введите имя как на карте"
             id="name"
             type="text"
             class=""
-            :class="[newCardNameIsValid ? 'valid' :'invalid']"
+            :class="newCardNameError"
             inputmode="numeric"
           />
           <label for="name">Имя держателя</label>
           <span
             class="helper-text"
-            data-error="Проверьте дату выпуска"
+            data-error="Проверьте имя"
             data-success=""
           ></span>
         </div>
       </div>
 
-      <!-- <div class="row">
+      <div class="row">
         <div class="input-field col s12">
           <p>
             <label>
-              <input type="checkbox" />
+              <input
+              v-model="rules"
+               type="checkbox" />
               <span>Согласен</span>
             </label>
           </p>
         </div>
-      </div> -->
+      </div>
     </form>
+         <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn left"
+          >Отмена</a
+        >
+        <button   
+        :disabled="allFormValid"
+        @click.prevent="SendToServer"
+        class="waves-effect waves-green btn"
+          >Ок</button>
+      </div>
   </div>
 </template>
 
 <script>
-import  {validateCardNumber,validateCardDate}  from './utils'
+import  {validateCardNumber, validateCardDate, validateCardCvv, validateCardName,sendCardinfo}  from './utils'
 export default {
   name: 'cardForm',
+  emits: ['newCardOnSuccess','newCardOnError'],
   data() {
     return {
-      newCardNumber: '', // номер
+      newCardNumber: '4276835011348750', // номер
       newCardNumberPotentialyIsValid: null,
       newCardNumberIsValid: null,
 
       newCardType: null, // лого
 
-      newCardDate: '', // дата
-  
+      newCardDate: '0424', // дата
       newCardDatePotentialyIsValid: null,
       newCardDateIsValid: null,
 
-      newCardCvv: '', // CVV
-      newCardCvvIsValid: true,
+      newCardCvv: '654', // CVV
+      newCardCvvPotentialyIsValid:null,
+      newCardCvvIsValid:null,
 
-      newCardName: '',
+      newCardName: 'asdasd asd ',
+      newCardNamePotentialyIsValid:null,
       newCardNameIsValid: true,
+      
+      rules:false,
     }
   },
   computed: {
@@ -138,7 +157,6 @@ export default {
         ? 'valid'
         : 'invalid'
     },
-
     newCardDateError() {
       if (this.newCardDate.length <=2) {
         return ''
@@ -148,7 +166,20 @@ export default {
         : 'invalid'
     },
     newCardCvvError() {
-      return this.newCardCvvIsValid ? 'valid' : 'invalid'
+      if (this.newCardCvv.length <2) {
+        return ''
+      }
+      return this.newCardCvvPotentialyIsValid || this.newCardCvvIsValid
+        ? 'valid'
+        : 'invalid'
+    },
+    newCardNameError() {
+      if (this.newCardName.length <2) {
+        return ''
+      }
+      return this.newCardNamePotentialyIsValid || this.newCardNameIsValid
+        ? 'valid'
+        : 'invalid'
     },
     inputLogo() {
       //this.$logos константа в плагинах
@@ -156,6 +187,10 @@ export default {
         ? this.newCardType
         : 'default'
     },
+
+    allFormValid(){
+      return !this.newCardNumberIsValid||!this.newCardDateIsValid||!this.newCardCvvIsValid||!this.newCardNameIsValid||!this.rules
+    }
   },
   mounted(){
    
@@ -164,9 +199,8 @@ export default {
     checkCadrdsNumber() {
       // отдаем на проверку в файл utils.js
       const res = validateCardNumber(this.newCardNumber)
-      // TODO деструктр  
       this.newCardNumberPotentialyIsValid = res.isPotentiallyValid
-      this.newCardNumberIsValid = res.isValid,
+      this.newCardNumberIsValid = res.isValid
       this.newCardType  = res.newCardType
     },
     ValidateCadrdsNumber() {
@@ -175,18 +209,53 @@ export default {
     },
     checkCadrdsDate() {
       const res = validateCardDate(this.newCardDate)
-      // TODO деструктр  
       this.newCardDatePotentialyIsValid = res.isPotentiallyValid
       this.newCardDateIsValid = res.isValid
     },
     checkCadrdsCvv() {
-      this.newCardCvvIsValid = this.newCardCvv.length===3
+      const res = validateCardCvv(this.newCardCvv)
+      this.newCardCvvPotentialyIsValid = res.isPotentiallyValid
+      this.newCardCvvIsValid = res.isValid
+    },
+    validateCadrdsCvv(){
+      this.newCardCvvPotentialyIsValid = this.newCardCvvIsValid
     },
     checkCadrdsName() {
-      this.newCardNameIsValid = this.newCardName.length>1
+      const res = validateCardName(this.newCardName)
+      this.newCardNamePotentialyIsValid = res.isPotentiallyValid
+      this.newCardNameIsValid = res.isValid
     },
+    validateCadrdsName(){
+      this.newCardNamePotentialyIsValid = this.newCardNameIsValid
+    },
+    resetForm(){
+      this.newCardNumber=''
+      this.newCardDate=''
+      this.newCardCvv=''
+      this.newCardName=''
+    },
+    async SendToServer(){
+      if(this.allFormValid){
+        return
+      }
+      const paylaod = {
+        number:this.newCardNumber,
+        date:this.newCardDate,
+        cvv:this.newCardCvv,
+        name:this.newCardName,
+        paysystem:this.newCardType
+      }
+      sendCardinfo(paylaod).then(result=>{
+        this.$emit('newCardOnSuccess',result,paylaod)
+        // console.log(result)
+      }).catch((err=>{
+        this.$emit('newCardOnError',err)
+        // console.log(e)
+      }))
+     
+    }
   },
 }
 </script>
 
-<style></style>
+

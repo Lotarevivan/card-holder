@@ -1,5 +1,5 @@
 <template>
-  <div class="cards__item">
+  <div class="cards__item" :data-id="id">
     <div class="cards__body">
       <div class="cards__body-logo">
         <img
@@ -7,7 +7,10 @@
           alt=""
           srcset=""
         />
-        <button class="dismiss" title="Dismiss">
+        <button 
+        
+        @click="$emit('deleteCardByID',id)"
+        class="dismiss" title="Dismiss">
           <svg
             aria-hidden="true"
             class="svg-icon iconClear"
@@ -46,6 +49,10 @@
 export default {
   name: 'card-item',
   props: {
+    id:{
+      type:Number,
+      default:0
+    },
     paysystem: {
       type: String,
       default: 'visa',
@@ -67,6 +74,7 @@ export default {
       default: 'Person Name',
     },
   },
+  emits: ['deleteCardByID'],
   computed: {
     maskedNumber() {
       const arrayGroup = this.cardNumber.match(/.{1,4}/g)
@@ -74,6 +82,8 @@ export default {
       return arrayGroup.map((el) => `<span>${el}</span>`).join('')
     },
   },
+
+ 
 }
 </script>
 

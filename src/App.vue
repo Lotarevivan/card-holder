@@ -1,8 +1,6 @@
 <template>
   <div style="height: 100vh; background-color: rgba(170, 126, 227, 0.1)">
-    
-    <card-form></card-form>
-    <section class="cards__container" style="display:none">
+    <section class="cards__container">
       <div class="cards__add">
         <div class="cards__body-add">
           <div class="cards__body-button">
@@ -14,9 +12,11 @@
           </div>
         </div>
       </div>
-      <!-- <cards-item
+      <cards-item
+        @deleteCardByID="deleteCardByID"
         v-for="card in cardsArray"
         :key="card.id"
+        :id="card.id"
         v-show="cardsArray.length > 0"
         :paysystem="card.paysystem"
         :cardNumber="card.cardNumber"
@@ -24,92 +24,122 @@
         :validYear="card.validYear"
         :holderName="card.holderName"
       >
-      </cards-item> -->
+      </cards-item>
     </section>
 
     <div id="modal1" class="modal">
       <div class="modal-content">
-        <h4>Lorem ipsum dolor sit amet.</h4>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique
-          odio non, porro ipsa mollitia quo eius eum rem earum cupiditate animi
-          iste necessitatibus nesciunt facere ducimus laboriosam molestias ut
-          dolore.
-        </p>
-        
-      </div>
-      <div class="modal-footer">
-        <a href="#!" class="modal-close waves-effect waves-green btn left"
-          >Отмена</a
-        >
-        <a href="#!" class="modal-close waves-effect waves-green btn disabled"
-          >Ок</a
-        >
+        <template v-if="formIsVisible">
+          <h4>Lorem ipsum dolor sit amet.</h4>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Similique
+            odio non.
+            <card-form 
+              @newCardOnSuccess="newCardOnSuccess"
+              @newCardOnError="newCardOnError"
+            ></card-form>
+          </p>
+        </template>
+        <template
+         v-if="!formIsVisible">
+          <h3>
+              {{ResultInfo}}
+          </h3>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
-// import cardsItem from './components/cardItem.vue'
+import cardsItem from './components/cardItem.vue'
 import cardForm from './components/cardForm.vue'
 export default {
   name: 'App',
   components: {
-    // cardsItem,
-    cardForm
+    cardsItem,
+    cardForm,
   },
   data() {
     return {
       cardsArray: [
         {
-          id: '1', // айди токена карты в нашей системе
+          id: 1, // айди токена карты в нашей системе
           paysystem: 'mastercard',
           cardNumber: '1234123412341234',
           validMonth: '11',
           validYear: '22',
-          holderName: 'Ivan Lotarev',
+          holderName: 'Person Name',
         },
         {
-          id: '2',
+          id: 2,
           paysystem: 'mir',
           cardNumber: '1234123412341234',
           validMonth: '11',
           validYear: '22',
-          holderName: 'Ivan Lotarev',
+          holderName: 'Person Name',
         },
         {
-          id: '3',
+          id: 3,
           paysystem: 'visa',
           cardNumber: '1234123412341234',
           validMonth: '11',
           validYear: '22',
-          holderName: 'Ivan Lotarev',
+          holderName: 'Person Name',
         },
       ],
       modalInstance: '',
+      formIsVisible:true,
+      ResultInfo:''
     }
   },
 
   mounted() {
     this.modalInit()
-    
   },
   methods: {
+    deleteCardByID(id) {
+      this.cardsArray = this.cardsArray.filter((el) => el.id !== id)
+    },
     modalInit() {
       // переопределим валидацию materialcss, затирает классы
       this.$material.validate_field = () => {}
       // сИнициалиируем и сохраняем ссылку на модальное окно
       const modalElements = this.$material.Modal.init(
-        document.querySelectorAll('.modal')
+        document.querySelectorAll('.modal'),{
+          onCloseEnd:()=>{
+            this.formIsVisible = true
+          }
+        }
       )
       this.modalInstance = modalElements[0]
     },
     modalOpen() {
       this.modalInstance.open()
     },
-    
+    modalClose() {
+      this.modalInstance.close()
+    },
+    newCardOnSuccess(result,payload) {
+      console.log(result)
+      console.log(payload)
+      this.cardsArray.push ({
+        id: Math.random()*100,
+        paysystem: payload.paysystem,
+        cardNumber: payload.number.replace(/ /g, ''),
+        validMonth: payload.date.split('/')[0],
+        validYear: payload.date.split('/')[0],
+        holderName: payload.name
+      })
+      this.formIsVisible=false
+      this.ResultInfo='Карта добавлена'
+      setTimeout(() => {
+        this.modalClose()
+      }, 1500)
+    },
+    newCardOnError(result) {
+      alert(result)
+    },
   },
 }
 </script>
@@ -238,7 +268,6 @@ export default {
 
 .input__logo {
   padding-right: 25px;
-
   background-size: 20px;
 }
 </style>

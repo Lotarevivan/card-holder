@@ -5,6 +5,16 @@
 // возвращаем  pont.valid, valid,  paysystem, valid от бека
 import valid from 'card-validator'
 
+
+
+
+/**
+ * Возвращает результа валидации по номеру карты.
+ *
+ * @param {number} number номер карты.
+ * @return {object} сосятоние валидации
+ */
+
 function validateCardNumber(number) {
   const card = valid.number(number)
   const { isPotentiallyValid, isValid } = card
@@ -15,10 +25,44 @@ function validateCardNumber(number) {
   return{isPotentiallyValid,isValid,newCardType}
 }
 
-function validateCardDate(date) {
-  const { isPotentiallyValid, isValid } = valid.expirationDate(date)
-  return{isPotentiallyValid,isValid}
+async function customValidateCardNumber(){
+  //  тут будет запрос к серверу
+  return new Promise((resolve,reject)=>{
+    setTimeout(()=>{
+      if ( Math.random() < 0.5){
+        resolve('valid')
+      }else {
+        reject('invalid')
+      }
+    },1500)
+  })
+}
+
+async function sendCardinfo(cardInfo){
+  return fetch('https://httpbin.org/post', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(cardInfo)
+  })
 }
 
 
-export  {validateCardNumber,validateCardDate}
+
+function validateCardDate(date) {
+  return valid.expirationDate(date)
+}
+
+function validateCardCvv(cvv) {
+  return valid.cvv(cvv)
+}
+
+function validateCardName(name) {
+  return valid.cardholderName(name)
+}
+ 
+
+
+export  {validateCardNumber,validateCardDate,validateCardCvv,validateCardName,customValidateCardNumber,sendCardinfo}
